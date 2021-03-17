@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<program>
+    <mainclass>
+        <name>Main</name>
+        <argsName>args</argsName>
+        <mainStatement>
+            <sysout>
+                <arg>
+                    <call>
+                        <ownerExpr>
+                            <new-object>
+<classId>Example</classId>
+                            </new-object>
+                        </ownerExpr>
+                        <methodId>run</methodId>
+                        <actuals/>
+                    </call>
+                </arg>
+            </sysout>
+        </mainStatement>
+    </mainclass>
+    <classdecls>
+        <classdecl>
+            <name>Example</name>
+            <fields/>
+            <methoddecls>
+                <methoddecl>
+                    <lineNumber>13</lineNumber>
+                    <returnType>
+                        <int/>
+                    </returnType>
+                    <name>run</name>
+                    <formals/>
+                    <vardecls>
+                        <vardecl>
+                            <lineNumber>10</lineNumber>
+                            <type>
+<ref>
+    <id>Example</id>
+</ref>
+                            </type>
+                            <name>e</name>
+                        </vardecl>
+                    </vardecls>
+                    <body>
+                        <assign>
+                            <lv>e</lv>
+                            <rv>
+<new-object>
+    <classId>Example</classId>
+</new-object>
+                            </rv>
+                        </assign>
+                    </body>
+                    <ret>
+                        <call>
+                            <ownerExpr>
+<ref-id>
+    <id>e</id>
+</ref-id>
+                            </ownerExpr>
+                            <methodId>run</methodId>
+                            <actuals/>
+                        </call>
+                    </ret>
+                </methoddecl>
+            </methoddecls>
+        </classdecl>
+        <classdecl>
+            <name>NonExample</name>
+            <fields/>
+            <methoddecls>
+                <methoddecl>
+                    <lineNumber>19</lineNumber>
+                    <returnType>
+                        <int/>
+                    </returnType>
+                    <name>run</name>
+                    <formals/>
+                    <vardecls/>
+                    <body/>
+                    <ret>
+                        <call>
+                            <ownerExpr>
+<new-object>
+    <classId>NonExample</classId>
+</new-object>
+                            </ownerExpr>
+                            <methodId>run</methodId>
+                            <actuals/>
+                        </call>
+                    </ret>
+                </methoddecl>
+            </methoddecls>
+        </classdecl>
+    </classdecls>
+</program>
