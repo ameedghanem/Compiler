@@ -7,5 +7,6 @@ The [project](https://www.cs.tau.ac.il/research/yotam.feldman/courses/wcc20/proj
  - [Code Generation](https://www.cs.tau.ac.il/research/yotam.feldman/courses/wcc20/codegen.html)
 
 ## Usage
-java -jar mjavac.jar parse compile inputProg.java out.ll
+build\
+java -jar mjavac.jar parse compile inputProg.java out.ll\
 lli out.ll
