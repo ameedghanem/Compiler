@@ -1,0 +1,350 @@
+/**
+ *  Package and Import Specifications
+ */
+import java_cup.runtime.*;
+import ast.*;
+import java.util.*;
+import java.io.*;
+
+/**
+ *  Usercode Components
+ */
+parser code
+{:
+  public Lexer lexer;
+
+  public Parser(Lexer lexer)
+  {
+    super(lexer);
+    this.lexer = lexer;
+  }
+
+  // Override default error reporting in parser
+  public void report_error(String message, Object info)
+  {
+      System.err.print("Syntax error at line " + lexer.getLine() + " of input. Parser\n");
+    System.exit(1);
+  }
+:}
+
+/* define how to connect to the scanner! */
+scan with
+{:
+  Symbol s;
+    try {
+  s = lexer.next_token();
+  //System.out.print(s.sym);
+  // System.out.print("[");
+  // System.out.print(lexer.getLine());
+  // System.out.print(":");
+  // System.out.print(lexer.getCharPos());
+  // System.out.print("] ");
+  //System.out.println(sym.terminalNames[s.sym] + " value = " + s.value);
+  //if(sym.terminalNames[s.sym].equals("EOF"))
+    //System.exit(1);
+  /*if (s.value != null)
+  {
+  
+   System.out.print("( ");
+   System.out.print(s.value);
+   System.out.print(" )");
+  }
+  System.out.print("\n");*/
+  return s;
+     } catch (java.lang.Error e) {
+         System.err.print("Syntax error at line " + lexer.getLine() + " of input. Lexer\n");
+         System.exit(1);
+         return null;
+     }
+:};
+
+/**
+ *  Symbol Lists
+ */
+
+/* Terminals (tokens returned by the scanner). */
+
+
+
+terminal PERIOD, COMMA, SEMICOLON, LCURLYBRACKET, RCURLYBRACKET, LPAREN, RPAREN, LEFTBRACKET, RIGHTBRACKET;
+terminal AND, LESSTHAN, EXCLAMATION, TIMES, MINUS, PLUS, EQUALS;
+terminal BOOLEAN, CLASS, ELSE, EXTENDS, FALSE, IF, INT, LENGTH, MAIN, NEW, PUBLIC, RETURN, STATIC, PRINTLN, THIS, TRUE, VOID, WHILE;
+terminal String IDENTIFIER;
+terminal NUMBER;
+terminal STRING;
+
+
+/*  Non terminals */
+
+
+non terminal Program program;
+non terminal MainClass mainClass;
+non terminal ClassDecl classDeclaration;
+non terminal ArrayList<ClassDecl> classDeclarationChain;
+non terminal VarDecl varDeclaration;
+non terminal ArrayList<VarDecl> varDeclarationChain;
+non terminal MethodDecl methodDeclaration;
+non terminal ArrayList<MethodDecl> methodDeclarationChain;
+non terminal AstType type;
+non terminal ArrayList<FormalArg> typeChain;
+non terminal ArrayList<FormalArg> typeChainParen;
+non terminal Statement statement;
+non terminal ArrayList<Statement> statementChain;
+non terminal Expr expression;
+non terminal List<Expr> expressionChain;
+/*non terminal IdentifierExpr identifier;*/
+
+
+/**
+ *  Precedence Declarations
+ */
+/*precedence right IDENTIFIER;*/
+precedence right EQUALS;
+precedence left AND;
+precedence left LESSTHAN;
+precedence left PLUS, MINUS;
+precedence left TIMES;
+precedence right NEW;
+precedence right EXCLAMATION;
+precedence left PERIOD, LEFTBRACKET, RIGHTBRACKET, LPAREN, RPAREN;
+
+/*
+ *  The Grammar Rules
+ */
+
+
+ start with program;
+
+program ::= mainClass:mc classDeclarationChain:cdc
+            {: RESULT = new Program(mc, cdc); :}
+            ;
+
+mainClass ::= CLASS IDENTIFIER:id1 LCURLYBRACKET PUBLIC STATIC VOID MAIN LPAREN STRING LEFTBRACKET RIGHTBRACKET IDENTIFIER:id2 RPAREN LCURLYBRACKET statement:stmt RCURLYBRACKET RCURLYBRACKET
+                                {: RESULT = new MainClass(id1, id2, stmt); :}
+                                ;
+        
+classDeclaration ::= CLASS IDENTIFIER:id LCURLYBRACKET varDeclarationChain:vdc methodDeclarationChain:mdc RCURLYBRACKET
+           {: RESULT = new ClassDecl(id, null, vdc, mdc); :}
+           |
+           CLASS IDENTIFIER:id1 EXTENDS IDENTIFIER:id2 LCURLYBRACKET varDeclarationChain:vdc methodDeclarationChain:mdc RCURLYBRACKET
+           {: RESULT = new ClassDecl(id1, id2, vdc, mdc); :}
+           ;
+        
+classDeclarationChain ::= classDeclaration:cd classDeclarationChain:cdc
+              {:
+                if(cdc == null)
+                  cdc = new ArrayList<ClassDecl>();
+                cdc.add(0, cd);
+                RESULT = cdc;
+              :}
+              |
+              {: RESULT = new ArrayList<ClassDecl>(); :}
+              ;
+        
+varDeclaration ::= type:t IDENTIFIER:id SEMICOLON
+             {: RESULT = new VarDecl(t, id, lexer.getLine()); :}   
+              ;
+        
+varDeclarationChain ::= varDeclarationChain:vdc  varDeclaration:vd 
+            {:
+              if(vdc == null)
+                vdc = new ArrayList<VarDecl>();
+              
+              vdc.add(vd);
+              
+              RESULT = vdc;
+            :}
+            |
+            {: RESULT = new ArrayList<VarDecl>(); :}
+            ;
+
+methodDeclaration ::= PUBLIC type:t IDENTIFIER:id LPAREN RPAREN LCURLYBRACKET varDeclarationChain:vdc statementChain:sc RETURN expression:e1 SEMICOLON RCURLYBRACKET
+            {: 
+              ArrayList<FormalArg> list = new ArrayList<FormalArg>();
+              RESULT = new MethodDecl(t, id, list, vdc, sc, e1, lexer.getLine());
+            :}
+            |
+            PUBLIC type:t IDENTIFIER:id LPAREN type:t2 IDENTIFIER:id2 typeChainParen:tc LCURLYBRACKET varDeclarationChain:vdc statementChain:sc RETURN expression:e1 SEMICOLON RCURLYBRACKET
+            {: 
+             //Wrap the additional type/id in a Formal
+             FormalArg temp = new FormalArg(t2, id2, lexer.getLine());
+             
+             //Add the first formal to the list, and then add all others from the TypeChain
+             ArrayList<FormalArg> list = new ArrayList<FormalArg>();
+             list.add(temp);
+            
+             for(int i = 0; i < tc.size(); i++)
+             {
+              list.add(tc.get(i));
+             }
+              
+             RESULT = new MethodDecl(t, id, list, vdc, sc, e1, lexer.getLine());
+            :}
+            ;
+            
+methodDeclarationChain ::= methodDeclaration:md methodDeclarationChain:mdc
+               {:
+                if(mdc == null)
+                  mdc = new ArrayList<MethodDecl>();
+                mdc.add(0, md);
+               
+                RESULT = mdc;
+               :}
+               |
+               {: RESULT = new ArrayList<MethodDecl>(); :}
+               ;
+            
+type ::= INT LEFTBRACKET RIGHTBRACKET
+     {: RESULT = new IntArrayAstType(); :}
+     |
+     BOOLEAN
+     {: RESULT = new BoolAstType(); :}
+     |
+     INT
+     {: RESULT = new IntAstType(); :}
+     |
+     IDENTIFIER:id
+     {: RESULT = new RefType(id); :}
+     ;
+
+typeChainParen ::= typeChain:tc RPAREN
+    {:RESULT = tc; :}
+    ;
+
+typeChain ::= COMMA type:t IDENTIFIER:id typeChain:tc
+        {:
+        //Wrap type/id in a Formal
+        FormalArg temp = new FormalArg(t, id, lexer.getLine());
+        
+        if(tc == null)
+          tc = new ArrayList<FormalArg>();
+        tc.add(0, temp);
+        
+        RESULT = tc;
+        :}
+        |
+        {: RESULT = new ArrayList<FormalArg>(); :}
+        ;
+     
+statement ::= LCURLYBRACKET statementChain:sc RCURLYBRACKET
+        {: RESULT = new BlockStatement(sc); :}
+        |
+        IF LPAREN expression:e1 RPAREN statement:s1 ELSE statement:s2
+        {: RESULT = new IfStatement(e1, s1, s2); :}
+        |
+        WHILE LPAREN expression:e1 RPAREN statement:s
+        {: RESULT = new WhileStatement(e1, s); :}
+        |
+        PRINTLN LPAREN expression:e1 RPAREN SEMICOLON
+        {: RESULT = new SysoutStatement(e1); :}
+        |
+        IDENTIFIER:id EQUALS expression:e1 SEMICOLON
+        {: RESULT = new AssignStatement(id, e1); :}
+        |
+        IDENTIFIER:id LEFTBRACKET expression:e1 RIGHTBRACKET EQUALS expression:e2 SEMICOLON
+        {: RESULT = new AssignArrayStatement(id, e1, e2); :}
+        ;
+
+statementChain ::= statement:stmt statementChain:sc
+           {: 
+                if(sc == null){
+                  sc = new ArrayList<Statement>();
+               }
+                
+              sc.add(0, stmt);
+            
+            RESULT = sc;
+           :}
+           |
+           {: RESULT = new ArrayList<Statement>(); :}
+           ;
+
+expression ::= expression:e1 AND:a expression:e2
+         {: RESULT = new AndExpr(e1, e2); :}
+         |
+         expression:e1 LESSTHAN:l expression:e2
+         {: RESULT = new LtExpr(e1, e2); :}
+         |
+         expression:e1 PLUS:p expression:e2
+         {: RESULT = new AddExpr(e1, e2); :}
+         |
+         expression:e1 MINUS:m expression:e2
+         {: RESULT = new SubtractExpr(e1, e2); :}
+         |
+         expression:e1 TIMES:s expression:e2
+         {: RESULT = new MultExpr(e1, e2); :}
+         |
+         expression:e1 LEFTBRACKET expression:e2 RIGHTBRACKET
+         {: RESULT = new ArrayAccessExpr(e1, e2); :}
+         |
+         expression:e1 PERIOD:p LENGTH
+         {: RESULT = new ArrayLengthExpr(e1); :}
+         |
+         expression:e1 PERIOD:p IDENTIFIER:id LPAREN RPAREN
+         {:
+          ArrayList<Expr> ec = new ArrayList<Expr>();
+          RESULT = new MethodCallExpr(e1, id, ec); 
+        :}
+         |
+         expression:e1 PERIOD:p IDENTIFIER:id LPAREN expression:e2 expressionChain:ec RPAREN
+         {: 
+          //Create a new list and add "e2" as the first argument.  Then add any from the expressionChain
+          ArrayList<Expr> list = new ArrayList<Expr>();
+          list.add(e2);
+          
+          for(int i = 0; i < ec.size(); i++)
+          {
+            list.add(ec.get(i));
+          }
+          
+          RESULT = new MethodCallExpr(e1, id, list); 
+         :}
+         |
+         NUMBER:i
+         {: 
+          Integer x = (Integer) i;
+          RESULT = new IntegerLiteralExpr(x.intValue()); 
+         :}
+         |
+         MINUS NUMBER:i
+         {: 
+          Integer x = (Integer) i;
+          RESULT = new IntegerLiteralExpr(x.intValue()*-1); 
+         :}
+         |
+         TRUE
+         {: RESULT = new TrueExpr(); :}
+         |
+         FALSE
+         {: RESULT = new FalseExpr(); :}
+         |
+         IDENTIFIER:id
+         {: RESULT = new IdentifierExpr(id); :}
+         |
+         THIS:t
+         {: RESULT = new ThisExpr(); :}
+         |
+         NEW INT LEFTBRACKET expression:e1 RIGHTBRACKET
+         {: RESULT = new NewIntArrayExpr(e1); :}
+         |
+         NEW IDENTIFIER:id LPAREN RPAREN
+         {: RESULT = new NewObjectExpr(id); :}
+         |
+         EXCLAMATION:e expression:e1
+         {: RESULT = new NotExpr(e1); :}
+         |
+         LPAREN expression:e1 RPAREN
+         {: RESULT = e1; :};
+
+expressionChain ::= COMMA expression:e1 expressionChain:ec
+          {: if(ec == null)
+              ec = new ArrayList<Expr>();
+              
+            ec.add(0, e1);
+            
+            RESULT = ec;
+          :}
+          |
+          {: RESULT = new ArrayList<Expr>(); :}
+          ;
+
