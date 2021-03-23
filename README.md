@@ -1,5 +1,5 @@
 # Compiler
-This is a compiler for the Mini Java programing language.
+This is a compiler for the Mini Java programing language. Follow [this link](http://www.cambridge.org/resources/052182060X/MCIIJ2e/grammar.htm) to read this language syntax. 
 The [project](https://www.cs.tau.ac.il/research/yotam.feldman/courses/wcc20/project.html) was in triples and it was built in the following steps:
  - [Lexing](https://www.cs.tau.ac.il/research/yotam.feldman/courses/wcc20/parsing.html)
  - [Parsing](https://www.cs.tau.ac.il/research/yotam.feldman/courses/wcc20/parsing.html)
