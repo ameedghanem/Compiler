@@ -8,5 +8,5 @@ The [project](https://www.cs.tau.ac.il/research/yotam.feldman/courses/wcc20/proj
 
 ## Usage
     $ ant
-    $ java -jar mjavac.jar parse compile inputProg.java out.ll
-    $ lli out.ll
+    $ java -jar mjavac.jar parse compile <inputProg.java> <out.ll>
+    $ lli <out.ll>
