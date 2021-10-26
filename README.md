@@ -6,7 +6,12 @@ The [project](https://www.cs.tau.ac.il/research/yotam.feldman/courses/wcc20/proj
  - [Semantic & Static analysis](https://www.cs.tau.ac.il/research/yotam.feldman/courses/wcc20/semantic.html)
  - [Code Generation](https://www.cs.tau.ac.il/research/yotam.feldman/courses/wcc20/codegen.html)
 
+## Installation
+    $ git clone https://github.com/ameedghanem/Compiler.git
+      ...
+    $ cd Compiler
+
 ## Usage
     $ ant
-    $ java -jar mjavac.jar parse compile inputProg.java out.ll
-    $ lli out.ll
+    $ java -jar mjavac.jar parse compile inputFileName.java outputFileName.ll
+    $ lli outputFileName.ll
