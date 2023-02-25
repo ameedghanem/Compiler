@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Compiler.iml" filepath="$PROJECT_DIR$/.idea/Compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mini java compiler/examples/examples.iml" filepath="$PROJECT_DIR$/mini java compiler/examples/examples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mini java compiler/mini java compiler.iml" filepath="$PROJECT_DIR$/mini java compiler/mini java compiler.iml" />
+    </modules>
+  </component>
+</project>
