@@ -11,22 +11,22 @@ public class MethodDecl extends AstNode {
     @XmlElement(required = true)
     private String name;
 
-    @XmlElementWrapper(name="formals", required = true)
-    @XmlElement(name="formal")
+    @XmlElementWrapper(name = "formals", required = true)
+    @XmlElement(name = "formal")
     private List<FormalArg> formals;
 
-    @XmlElementWrapper(name="vardecls", required = true)
-    @XmlElement(name="vardecl")
+    @XmlElementWrapper(name = "vardecls", required = true)
+    @XmlElement(name = "vardecl")
     private List<VarDecl> vardecls;
 
-    @XmlElementWrapper(name="body", required=true)
+    @XmlElementWrapper(name = "body", required = true)
     @XmlElements({
-            @XmlElement(name="block", type=BlockStatement.class, required = false),
-            @XmlElement(name="if", type=IfStatement.class, required = false),
-            @XmlElement(name="while", type=WhileStatement.class, required = false),
-            @XmlElement(name="sysout", type=SysoutStatement.class, required = false),
-            @XmlElement(name="assign", type=AssignStatement.class, required = false),
-            @XmlElement(name="assign-array", type=AssignArrayStatement.class, required = false)
+            @XmlElement(name = "block", type = BlockStatement.class, required = false),
+            @XmlElement(name = "if", type = IfStatement.class, required = false),
+            @XmlElement(name = "while", type = WhileStatement.class, required = false),
+            @XmlElement(name = "sysout", type = SysoutStatement.class, required = false),
+            @XmlElement(name = "assign", type = AssignStatement.class, required = false),
+            @XmlElement(name = "assign-array", type = AssignArrayStatement.class, required = false)
     })
     private List<Statement> body;
 

@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="tools">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/mini java compiler/tools/jaxb-jxc-2.3.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mini java compiler/tools/jakarta.xml.bind-api-2.3.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mini java compiler/tools/java-cup-11b.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mini java compiler/tools/jakarta.activation-api-1.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mini java compiler/tools/java-cup-11b-runtime.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mini java compiler/tools/JFlex.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mini java compiler/tools/jaxb-impl-2.3.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
